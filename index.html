@@ -30,6 +30,11 @@
       text-align: center;
       width: 180px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      height: 100px; /* Default height */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .clock-widget .title {
@@ -113,35 +118,46 @@
       `;
 
       clockContainer.appendChild(widget);
+
+      // Adjust height dynamically based on the widget content
+      const widgetHeight = Math.random() * (120 - 60) + 60; // Random height between 60 and 120
+      widget.style.height = `${widgetHeight}px`;
+
       updateClock(title, timezone);
       setInterval(() => updateClock(title, timezone), 1000);
     }
 
     function updateClock(title, timezone) {
-      // Use `Intl.DateTimeFormat` to handle the time zone and update the time
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: timezone,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      });
+      try {
+        // Use `Intl.DateTimeFormat` to handle the time zone and update the time
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: timezone,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
 
-      const formattedTime = formatter.format(new Date());
-      const [hours, minutes, seconds] = formattedTime.split(':');
+        const formattedTime = formatter.format(new Date());
+        const [hours, minutes, seconds] = formattedTime.split(':');
 
-      document.getElementById(`time-${title.replace(/\s+/g, "")}`).textContent = formattedTime;
+        document.getElementById(`time-${title.replace(/\s+/g, "")}`).textContent = formattedTime;
 
-      // Calculate analog clock hands positions
-      const hourDeg = (parseInt(hours) % 12) * 30 + parseInt(minutes) * 0.5;
-      const minuteDeg = parseInt(minutes) * 6;
-      const secondDeg = parseInt(seconds) * 6;
+        // Calculate analog clock hands positions
+        const hourDeg = (parseInt(hours) % 12) * 30 + parseInt(minutes) * 0.5;
+        const minuteDeg = parseInt(minutes) * 6;
+        const secondDeg = parseInt(seconds) * 6;
 
-      document.getElementById(`hour-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
-      document.getElementById(`minute-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
-      document.getElementById(`second-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+        document.getElementById(`hour-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        document.getElementById(`minute-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+        document.getElementById(`second-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+      } catch (error) {
+        console.error("Error updating clock for", title, error);
+        document.getElementById(`time-${title.replace(/\s+/g, "")}`).textContent = "Error";
+      }
     }
 
+    // Create clocks for all timezones
     timezones.forEach(({ title, timezone }) => createClockWidget(title, timezone));
   </script>
 </body>
