@@ -90,7 +90,7 @@
     const timezones = [
       { title: "Turkey", timezone: "Europe/Istanbul" },
       { title: "Syria", timezone: "Asia/Damascus" },
-      { title: "Canada", timezone: "America/Ottawa" }, // Fixed timezone string
+      { title: "Canada", timezone: "America/Ottawa" }, // Corrected timezone
       { title: "UAE", timezone: "Asia/Dubai" },
       { title: "Japan", timezone: "Asia/Tokyo" },
       { title: "Germany", timezone: "Europe/Berlin" },
@@ -102,7 +102,7 @@
       const widget = document.createElement("div");
       widget.classList.add("clock-widget");
 
-      widget.innerHTML = `
+      widget.innerHTML = `  
         <div class="title">${title}</div>
         <div class="time" id="time-${title.replace(/\s+/g, "")}">--:--:--</div>
         <div class="analog-clock">
@@ -118,19 +118,24 @@
     }
 
     function updateClock(title, timezone) {
-      const now = new Date().toLocaleString("en-US", { timeZone: timezone });
-      const time = new Date(now);
+      // Use `Intl.DateTimeFormat` to handle the time zone and update the time
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
 
-      const hours = time.getHours();
-      const minutes = time.getMinutes();
-      const seconds = time.getSeconds();
+      const formattedTime = formatter.format(new Date());
+      const [hours, minutes, seconds] = formattedTime.split(':');
 
-      const formattedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
       document.getElementById(`time-${title.replace(/\s+/g, "")}`).textContent = formattedTime;
 
-      const hourDeg = (hours % 12) * 30 + minutes * 0.5;
-      const minuteDeg = minutes * 6;
-      const secondDeg = seconds * 6;
+      // Calculate analog clock hands positions
+      const hourDeg = (parseInt(hours) % 12) * 30 + parseInt(minutes) * 0.5;
+      const minuteDeg = parseInt(minutes) * 6;
+      const secondDeg = parseInt(seconds) * 6;
 
       document.getElementById(`hour-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
       document.getElementById(`minute-${title.replace(/\s+/g, "")}`).style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
