@@ -1,0 +1,46 @@
+{
+  "clocks": [
+    {
+      "city": "Turkey",
+      "timezone": "Europe/Istanbul",
+      "backgroundColor": "#FFCCCC",
+      "textColor": "#333333"
+    },
+    {
+      "city": "Syria",
+      "timezone": "Asia/Damascus",
+      "backgroundColor": "#FFDDCC",
+      "textColor": "#333333"
+    },
+    {
+      "city": "Japan",
+      "timezone": "Asia/Tokyo",
+      "backgroundColor": "#FFCCCC",
+      "textColor": "#333333"
+    },
+    {
+      "city": "UAE",
+      "timezone": "Asia/Dubai",
+      "backgroundColor": "#CCFFDD",
+      "textColor": "#333333"
+    },
+    {
+      "city": "Germany",
+      "timezone": "Europe/Berlin",
+      "backgroundColor": "#CCCCFF",
+      "textColor": "#333333"
+    },
+    {
+      "city": "Canada",
+      "timezone": "America/Toronto",
+      "backgroundColor": "#FFE4CC",
+      "textColor": "#333333"
+    },
+    {
+      "city": "USA",
+      "timezone": "America/New_York",
+      "backgroundColor": "#CCDDFF",
+      "textColor": "#333333"
+    }
+  ]
+}
