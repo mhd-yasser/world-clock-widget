@@ -1,125 +1,99 @@
-// Default city configurations
-const defaultCities = [
-  { name: "Turkey", timezone: "Europe/Istanbul", color: "#000000", backgroundColor: "#FFC0CB", size: 100 },
-  { name: "Syria", timezone: "Asia/Damascus", color: "#0000FF", backgroundColor: "#FFB6C1", size: 100 },
-  { name: "Japan", timezone: "Asia/Tokyo", color: "#FF0000", backgroundColor: "#FFFACD", size: 100 },
-];
+const clocksContainer = document.getElementById('clocks-container');
+const settingsToggle = document.querySelector('.settings-toggle');
+const settingsPanel = document.querySelector('.settings-panel');
+const cityInput = document.getElementById('city-select');
+const addCityBtn = document.getElementById('add-city');
+const clearCitiesBtn = document.getElementById('clear-cities');
 
-// Load cities from LocalStorage or use default
-let cities = JSON.parse(localStorage.getItem("cities")) || defaultCities;
+let cities = ['Turkey', 'Syria', 'Japan', 'UAE', 'Germany', 'Canada', 'USA'];
 
-// DOM Elements
-const container = document.getElementById("clocks-container");
-const settingsContainer = document.getElementById("settings-container");
-const settingsForm = document.getElementById("settings-form");
-const toggleSettings = document.getElementById("toggle-settings");
+function createClock(city) {
+    const clockElement = document.createElement('div');
+    clockElement.classList.add('clock');
 
-// Toggle settings form
-toggleSettings.addEventListener("click", () => {
-  settingsContainer.classList.toggle("hidden");
-});
+    const cityName = document.createElement('div');
+    cityName.classList.add('city-name');
+    cityName.textContent = city;
 
-// Render clocks
-function renderClocks() {
-  container.innerHTML = ""; // Clear existing clocks
+    const analogueClock = document.createElement('div');
+    analogueClock.classList.add('analogue-clock');
 
-  cities.forEach((city, index) => {
-    const clockWrapper = document.createElement("div");
-    clockWrapper.className = "clock-wrapper";
-    clockWrapper.style.backgroundColor = city.backgroundColor;
-    clockWrapper.style.width = `${city.size}px`;
-    clockWrapper.style.height = `${city.size + 50}px`;
+    const hourHand = document.createElement('div');
+    hourHand.classList.add('hour');
+    analogueClock.appendChild(hourHand);
 
-    // Title
-    const title = document.createElement("h2");
-    title.innerText = city.name;
-    title.style.color = city.color;
+    const minuteHand = document.createElement('div');
+    minuteHand.classList.add('minute');
+    analogueClock.appendChild(minuteHand);
 
-    // Numerical Clock
-    const digitalClock = document.createElement("div");
-    digitalClock.className = "digital-clock";
-    digitalClock.style.color = city.color;
+    const secondHand = document.createElement('div');
+    secondHand.classList.add('second');
+    analogueClock.appendChild(secondHand);
 
-    // Analogue Clock
-    const analogueClock = document.createElement("div");
-    analogueClock.className = "analogue-clock";
-    analogueClock.style.borderColor = city.color;
-    analogueClock.style.width = `${city.size}px`;
-    analogueClock.style.height = `${city.size}px`;
+    const digitalClock = document.createElement('div');
+    digitalClock.classList.add('digital-clock');
 
-    // Append to wrapper
-    clockWrapper.appendChild(title);
-    clockWrapper.appendChild(analogueClock);
-    clockWrapper.appendChild(digitalClock);
-    container.appendChild(clockWrapper);
+    clockElement.appendChild(cityName);
+    clockElement.appendChild(analogueClock);
+    clockElement.appendChild(digitalClock);
 
-    // Update the clocks every second
-    setInterval(() => {
-      const now = new Date();
-      const localTime = new Date(
-        now.toLocaleString("en-US", { timeZone: city.timezone })
-      );
+    clocksContainer.appendChild(clockElement);
 
-      // Update digital clock
-      const hours = localTime.getHours().toString().padStart(2, "0");
-      const minutes = localTime.getMinutes().toString().padStart(2, "0");
-      const seconds = localTime.getSeconds().toString().padStart(2, "0");
-      digitalClock.innerText = `${hours}:${minutes}:${seconds}`;
+    function updateClock() {
+        const time = new Date();
 
-      // Update analogue clock
-      const hoursRotation = (localTime.getHours() % 12) * 30 + localTime.getMinutes() * 0.5;
-      const minutesRotation = localTime.getMinutes() * 6;
-      const secondsRotation = localTime.getSeconds() * 6;
+        // Simulate different timezones based on city (example logic)
+        let offset = 0;
+        switch (city.toLowerCase()) {
+            case 'turkey': offset = 3; break;
+            case 'syria': offset = 2; break;
+            case 'japan': offset = 9; break;
+            case 'uae': offset = 4; break;
+            case 'germany': offset = 1; break;
+            case 'canada': offset = -5; break;
+            case 'usa': offset = -5; break;
+        }
+        const utc = time.getTime() + time.getTimezoneOffset() * 60000;
+        const cityTime = new Date(utc + (3600000 * offset));
 
-      analogueClock.style.setProperty("--hour-rotation", `${hoursRotation}deg`);
-      analogueClock.style.setProperty("--minute-rotation", `${minutesRotation}deg`);
-      analogueClock.style.setProperty("--second-rotation", `${secondsRotation}deg`);
-    }, 1000);
-  });
+        const hours = cityTime.getHours();
+        const minutes = cityTime.getMinutes();
+        const seconds = cityTime.getSeconds();
+
+        // Update digital clock
+        digitalClock.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        // Update analogue clock hands
+        hourHand.style.transform = `rotate(${(hours % 12) * 30 + minutes / 2}deg)`;
+        minuteHand.style.transform = `rotate(${minutes * 6}deg)`;
+        secondHand.style.transform = `rotate(${seconds * 6}deg)`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
 }
 
-// Handle form submission
-settingsForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+function renderClocks() {
+    clocksContainer.innerHTML = '';
+    cities.forEach(createClock);
+}
 
-  const cityName = document.getElementById("city-name").value;
-  const timezone = document.getElementById("city-timezone").value;
-  const textColor = document.getElementById("text-color").value || "#000000";
-  const backgroundColor =
-    document.getElementById("background-color").value || "#FFFFFF";
-  const clockSize = parseInt(document.getElementById("clock-dimensions").value);
-
-  // Add or update city
-  const cityIndex = cities.findIndex((city) => city.name === cityName);
-  if (cityIndex > -1) {
-    // Update existing city
-    cities[cityIndex] = {
-      name: cityName,
-      timezone,
-      color: textColor,
-      backgroundColor,
-      size: clockSize,
-    };
-  } else {
-    // Add new city
-    cities.push({
-      name: cityName,
-      timezone,
-      color: textColor,
-      backgroundColor,
-      size: clockSize,
-    });
-  }
-
-  // Save to LocalStorage
-  localStorage.setItem("cities", JSON.stringify(cities));
-
-  // Re-render clocks
-  renderClocks();
-
-  // Clear form
-  settingsForm.reset();
+addCityBtn.addEventListener('click', () => {
+    const city = cityInput.value.trim();
+    if (city && !cities.includes(city)) {
+        cities.push(city);
+        renderClocks();
+    }
+    cityInput.value = '';
 });
 
-// Initial render
+clearCitiesBtn.addEventListener('click', () => {
+    cities = [];
+    renderClocks();
+});
+
+settingsToggle.addEventListener('click', () => {
+    settingsPanel.classList.toggle('hidden');
+});
+
 renderClocks();
