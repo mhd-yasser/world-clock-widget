@@ -1,15 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>World Clock Widget</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customizable World Clocks</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container" id="clocks-container">
-    <!-- Clocks will be dynamically added here -->
+  <h1>Customizable World Clocks</h1>
+  <button id="toggle-settings">Toggle Settings</button>
+
+  <!-- Settings Form -->
+  <div id="settings-container" class="hidden">
+    <h2>Customize Clocks</h2>
+    <form id="settings-form">
+      <label for="city-name">City Name:</label>
+      <input type="text" id="city-name" placeholder="City Name" required />
+
+      <label for="city-timezone">Timezone:</label>
+      <input type="text" id="city-timezone" placeholder="e.g., Europe/Istanbul" required />
+
+      <label for="text-color">Text Color:</label>
+      <input type="color" id="text-color" />
+
+      <label for="background-color">Background Color:</label>
+      <input type="color" id="background-color" />
+
+      <label for="clock-dimensions">Clock Size (px):</label>
+      <input type="number" id="clock-dimensions" placeholder="100" required />
+
+      <button type="submit">Add/Update Clock</button>
+    </form>
   </div>
+
+  <!-- Clocks Container -->
+  <div id="clocks-container"></div>
+
   <script src="script.js"></script>
 </body>
 </html>
